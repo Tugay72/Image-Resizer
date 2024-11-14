@@ -1,70 +1,153 @@
-# Getting Started with Create React App
+# Image Resizing and Downloading App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This web application allows users to upload an image, resize it based on custom width and height, change its format (JPG, JPEG, PNG, WEBP), and then download the resized image. It uses a Flask backend to handle image processing and React for the frontend.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Image Upload**: Upload images directly from your computer.
+- **Resize Image**: Choose the new width and height for the image.
+- **Change File Format**: Save the image in multiple formats (JPEG, PNG, WEBP).
+- **Download Resized Image**: Once the image is resized, it is available for download.
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Frontend**: React.js, Axios
+- **Backend**: Flask (Python), Pillow for image processing
+- **Libraries**:
+  - React
+  - Flask
+  - Axios
+  - Pillow
+  - Flask-CORS
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Setup Instructions
 
-### `npm test`
+### Prerequisites
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Node.js** (for frontend)
+- **Python 3.6+** (for backend)
+- **pip** (for installing Python dependencies)
+- **npm** or **yarn** (for managing frontend dependencies)
 
-### `npm run build`
+### Frontend Setup (React)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clone the repository:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   ```bash
+   gh repo clone Tugay72/Image-Resizer
+   cd image-resizing-app/frontend
+2. Install required dependencies:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   ```bash
+   npm install
 
-### `npm run eject`
+3. Start the frontend development server:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+   ```bash
+   npm start
+This will start the React development server on http://localhost:3000.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Backend Setup (Flask)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. Navigate to the backend directory:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+   ```bash
+   cd src/backend
 
-## Learn More
+2. Create a virtual environment (optional but recommended):
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   
+3. Start the Flask server:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+   ```bash
+   cd path/to/your/directory
+   python app.py
+The backend will be running at http://localhost:5000.
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Libraries and Dependencies
+Frontend (React):
+1. React: A JavaScript library for building user interfaces.
+Install with:
 
-### Analyzing the Bundle Size
+   ```bash
+   npm install react react-dom
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+2. Axios: A promise-based HTTP client for making requests to the backend.
+Install with:
 
-### Making a Progressive Web App
+   ```bash
+   npm install axios
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+3. Backend (Flask):
+Flask: A micro web framework for Python, used to build the backend.
+Install with:
 
-### Advanced Configuration
+   ```bash
+   pip install flask
+   
+4. Flask-CORS: A package to handle Cross-Origin Resource Sharing (CORS) for making requests from the frontend to the backend.
+Install with:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+   ```bash
+   pip install flask-cors
 
-### Deployment
+5. Pillow: A Python Imaging Library (PIL) fork that allows image processing (resizing, format conversion).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+   ```bash
+   pip install pillow
 
-### `npm run build` fails to minify
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+File Upload and Resizing API (Backend)
+The backend handles image uploads and resizing via the /upload endpoint. The frontend sends the image file, desired width, height, and file type via a POST request. The backend resizes the image and sends the processed image back to the frontend, where it can be downloaded.
+1. Example Request (Frontend):
+
+   ```bash
+   const formData = new FormData();
+   formData.append('image', image);
+   formData.append('width', width.toString());
+   formData.append('height', height.toString());
+   formData.append('fileType', imageType.toString());
+  
+   const response = await axios.post("http://127.0.0.1:5000/upload", formData, {
+     headers: {
+         "Content-Type": "multipart/form-data",
+     },
+     responseType: "blob",
+   });
+
+2. Example Response (Backend):
+   ```bash
+   @app.route("/upload", methods=["POST"])
+   def upload_and_resize_image():
+    file = request.files["image"]
+    resized_width = int(request.form.get('width', 1500))
+    resized_height = int(request.form.get('height', 1500))
+    resized_type = str(request.form.get('fileType', 'JPEG'))
+
+    image = Image.open(file)
+    resized_image = image.resize((resized_width, resized_height))
+    img_io = io.BytesIO()
+    resized_image.save(img_io, format=resized_type)
+    img_io.seek(0)
+
+    return send_file(img_io, mimetype=f"image/{resized_type}")
+
+API Documentation.
+POST /upload: Upload an image, resize it, and get the processed image back.
+Request Body:
+
+image: The image file.
+width: Desired width of the image (default: 1500).
+height: Desired height of the image (default: 1500).
+fileType: Desired file format for the resized image (JPG, JPEG, PNG, WEBP).
+Response: The resized image file in the specified format.
+
+Contributing
+Feel free to fork the repository and submit pull requests for any improvements or bug fixes. Contributions are welcome!
+
+License
+This project is licensed under the Creative Commons NonCommercial (CC BY-NC).
